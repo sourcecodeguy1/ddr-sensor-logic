@@ -1,33 +1,47 @@
+/*
+Arrow direction by button pin
+1 = Left
+2 = Right
+3 = Up
+4 = Down
+*/
 #include <Joystick1.h>
+#include <FastLED.h>
 
-// Constants that map the physical pin to the joystick button.
+#define LED_PIN_LEFT     6
+#define LED_PIN_RIGHT    7
+#define LED_PIN_UP       8
+#define LED_PIN_DOWN     9
+
+#define NUM_LEDS    19
+
+CRGB ledsLeft[NUM_LEDS];
+CRGB ledsRight[NUM_LEDS];
+CRGB ledsUp[NUM_LEDS];
+CRGB ledsDown[NUM_LEDS];
+
+void setup() {
+  // Initialize Button Pins
+  pinMode(2, INPUT_PULLUP);
+  pinMode(3, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
+  pinMode(5, INPUT_PULLUP);
+
+  // Initialize Joystick Library
+  Joystick.begin();
+
+  // Initialize LED Strips
+  FastLED.addLeds<WS2812, LED_PIN_LEFT, GRB>(ledsLeft, NUM_LEDS);
+  FastLED.addLeds<WS2812, LED_PIN_RIGHT, GRB>(ledsRight, NUM_LEDS);
+  FastLED.addLeds<WS2812, LED_PIN_UP, GRB>(ledsUp, NUM_LEDS);
+  FastLED.addLeds<WS2812, LED_PIN_DOWN, GRB>(ledsDown, NUM_LEDS);
+}
+
+// Constant that maps the physical pin to the joystick button.
 const int pinToButtonMap[4] = {2, 3, 4, 5};
 
 // Last state of the buttons
 int lastButtonState[4] = {0, 0, 0, 0};
-
-// LED pins
-const int leftLedPin = 6;
-const int rightLedPin = 7;
-const int upLedPin = 8;
-const int downLedPin = 9;
-
-void setup() {
-  // Initialize Button Pins
-  pinMode(pinToButtonMap[0], INPUT_PULLUP);
-  pinMode(pinToButtonMap[1], INPUT_PULLUP);
-  pinMode(pinToButtonMap[2], INPUT_PULLUP);
-  pinMode(pinToButtonMap[3], INPUT_PULLUP);
-
-  // Initialize LED pins
-  pinMode(leftLedPin, OUTPUT);
-  pinMode(rightLedPin, OUTPUT);
-  pinMode(upLedPin, OUTPUT);
-  pinMode(downLedPin, OUTPUT);
-
-  // Initialize Joystick Library
-  Joystick.begin();
-}
 
 void loop() {
   // Read pin values
@@ -39,11 +53,33 @@ void loop() {
     }
   }
 
-  // Control LED bulbs based on button states
-  digitalWrite(leftLedPin, lastButtonState[0]);
-  digitalWrite(rightLedPin, lastButtonState[1]);
-  digitalWrite(upLedPin, lastButtonState[2]);
-  digitalWrite(downLedPin, lastButtonState[3]);
+  // Update LED colors
+  for (int i = 0; i < NUM_LEDS; i++) {
+    if (lastButtonState[0] == 1) { // Left
+      ledsLeft[i] = CRGB::Blue;
+    } else {
+      ledsLeft[i] = CRGB::Black;
+    }
 
+    if (lastButtonState[1] == 1) { // Right
+      ledsRight[i] = CRGB::Blue;
+    } else {
+      ledsRight[i] = CRGB::Black;
+    }
+
+    if (lastButtonState[2] == 1) { // Up
+      ledsUp[i] = CRGB::Red;
+    } else {
+      ledsUp[i] = CRGB::Black;
+    }
+
+    if (lastButtonState[3] == 1) { // Down
+      ledsDown[i] = CRGB::Red;
+    } else {
+      ledsDown[i] = CRGB::Black;
+    }
+  }
+
+  FastLED.show();
   delay(50);
 }
