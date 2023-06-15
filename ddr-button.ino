@@ -13,7 +13,7 @@ Arrow direction by button pin
 #define LED_PIN_UP       8
 #define LED_PIN_DOWN     9
 
-#define NUM_LEDS    19
+#define NUM_LEDS    20
 
 CRGB ledsLeft[NUM_LEDS];
 CRGB ledsRight[NUM_LEDS];
