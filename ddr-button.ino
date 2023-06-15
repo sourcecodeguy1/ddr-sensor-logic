@@ -1,9 +1,9 @@
 /*
 Arrow direction by button pin
-1 = Left
-2 = Right
-3 = Up
-4 = Down
+2 = Left
+3 = Right
+4 = Up
+5 = Down
 */
 #include <Joystick1.h>
 #include <FastLED.h>
