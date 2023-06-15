@@ -1,62 +1,49 @@
-/*
-Arrow direction by button pin
-2 = Left
-3 = Right
-4 = Up
-5 = Down
-*/
 #include <Joystick1.h>
-#include <FastLED.h>
 
-#define LED_PIN     6
-#define NUM_LEDS    60
-
-CRGB leds[NUM_LEDS];
-
-void setup() {
-  // Initialize Button Pins
-  pinMode(2, INPUT_PULLUP);
-  pinMode(3, INPUT_PULLUP);
-  pinMode(4, INPUT_PULLUP);
-  pinMode(5, INPUT_PULLUP);
-
-  // Initialize Joystick Library
-  Joystick.begin();
-
-  // Initialize LED Strip
-  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
-}
-
-// Constant that maps the physical pin to the joystick button.
+// Constants that map the physical pin to the joystick button.
 const int pinToButtonMap[4] = {2, 3, 4, 5};
 
 // Last state of the buttons
 int lastButtonState[4] = {0, 0, 0, 0};
 
-void loop() {
+// LED pins
+const int leftLedPin = 6;
+const int rightLedPin = 7;
+const int upLedPin = 8;
+const int downLedPin = 9;
 
+void setup() {
+  // Initialize Button Pins
+  pinMode(pinToButtonMap[0], INPUT_PULLUP);
+  pinMode(pinToButtonMap[1], INPUT_PULLUP);
+  pinMode(pinToButtonMap[2], INPUT_PULLUP);
+  pinMode(pinToButtonMap[3], INPUT_PULLUP);
+
+  // Initialize LED pins
+  pinMode(leftLedPin, OUTPUT);
+  pinMode(rightLedPin, OUTPUT);
+  pinMode(upLedPin, OUTPUT);
+  pinMode(downLedPin, OUTPUT);
+
+  // Initialize Joystick Library
+  Joystick.begin();
+}
+
+void loop() {
   // Read pin values
-  for (int index = 0; index < 4; index++)
-  {
+  for (int index = 0; index < 4; index++) {
     int currentButtonState = !digitalRead(pinToButtonMap[index]);
-    if (currentButtonState != lastButtonState[index])
-    {
+    if (currentButtonState != lastButtonState[index]) {
       Joystick.setButton(index, currentButtonState);
       lastButtonState[index] = currentButtonState;
     }
   }
 
-  // Update LED colors
-  for (int i = 0; i < NUM_LEDS; i++) {
-    if (lastButtonState[0] == 1 || lastButtonState[1] == 1) { // Left, Right
-      leds[i] = CRGB::Blue;
-    } else if (lastButtonState[2] == 1 || lastButtonState[3] == 1) { // Up, Down
-      leds[i] = CRGB::Red;
-    } else {
-      leds[i] = CRGB::Black;
-    }
-  }
-  FastLED.show();
+  // Control LED bulbs based on button states
+  digitalWrite(leftLedPin, lastButtonState[0]);
+  digitalWrite(rightLedPin, lastButtonState[1]);
+  digitalWrite(upLedPin, lastButtonState[2]);
+  digitalWrite(downLedPin, lastButtonState[3]);
 
   delay(50);
 }
